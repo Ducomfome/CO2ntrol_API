@@ -11,31 +11,6 @@ const PORT = 8080;
 app.use(cors());
 app.use(express.json());
 
-app.get("/:bairro", async (req, res) => {
-  const { bairro } = req.params;
-  const bairroName = bairro.toLowerCase().replace(/\s+/g, "");
-  const coordenadas = bairrosManaus[bairroName];
-
-  if (!coordenadas) {
-    return res.status(404).json({ error: "Bairro não encontrado" });
-  }
-
-  try {
-    // data vai receber um objeto com os dados da qualidade do ar
-    const data = await getAirQualityByCoordinates(
-      coordenadas.lat,
-      coordenadas.lon
-    );
-
-    // pegando os dados da qualidade do ar
-    const aqi = data.indexes[0].aqi;
-
-    res.status(200).json({ bairro: bairroName, qualidadeAr: aqi });
-  } catch (error) {
-    res.status(500).json({ error: "Error ao obter dados da qualidade do ar." });
-  }
-});
-
 app.get("/", async (req, res) => {
   try {
     const QualidadeArBairros = await getAllAirQualityData(bairrosManaus);
