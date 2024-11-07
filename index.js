@@ -1,9 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const {
-  getAirQualityByCoordinates,
-  getAllAirQualityData,
-} = require("./airQualityService");
+const { getAllAirQualityData } = require("./airQualityService");
 
 const app = express();
 const PORT = 8080;

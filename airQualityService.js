@@ -53,6 +53,5 @@ const getAllAirQualityData = async (bairrosManaus) => {
 };
 
 module.exports = {
-  getAirQualityByCoordinates,
   getAllAirQualityData,
 };
