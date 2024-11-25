@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { getAllAirQualityData } = require("./airQualityService");
+const { getAllAirQualityData, getAirQualityByCoordinates } = require("./airQualityService");
 
 const app = express();
 const PORT = 8080;
@@ -17,6 +17,21 @@ app.get("/", async (req, res) => {
     res.status(500).json({ error: "Erro ao obter dados de todos os bairros." });
   }
 });
+
+app.get("/:bairro", async (req, res) => {
+  const bairro = req.params.bairro;
+
+  try {
+    const qualidadeAr = await getAirQualityByCoordinates(
+      bairrosManaus[bairro].lat,
+      bairrosManaus[bairro].lon
+    );
+    res.status(200).json({ qualidadeAr });
+  } catch (error) {
+    console.log("Erro ao obter dados do bairro:", error);
+    res.status(500).json({ error: "Erro ao obter dados do bairro." });
+  }
+})
 
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
 

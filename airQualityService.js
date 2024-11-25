@@ -4,22 +4,15 @@ require("dotenv").config();
 const API_KEY = process.env.API_KEY;
 
 const getAirQualityByCoordinates = async (lat, lon) => {
-  let data = {
-    universalAqi: true,
-    location: {
-      latitude: lat,
-      longitude: lon,
-    },
-  };
-
   try {
-    const response = await axios.post(
-      `https://airquality.googleapis.com/v1/currentConditions:lookup?key=${API_KEY}`,
-      data
+    const response = await axios.get(
+      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
     );
-    return response.data;
+
+    const aqi = response.data.list[0].main.aqi;
+    return aqi;
   } catch (error) {
-    console.log("Erro ao obter dados da qualidade do ar:", error);
+    console.error("Erro ao obter dados da qualidade do ar:", error.message);
     throw error;
   }
 };
@@ -29,19 +22,18 @@ const getAllAirQualityData = async (bairrosManaus) => {
 
   for (const [bairro, coordenadas] of Object.entries(bairrosManaus)) {
     try {
-      const data = await getAirQualityByCoordinates(
+      const aqi = await getAirQualityByCoordinates(
         coordenadas.lat,
         coordenadas.lon
       );
 
-      if (data && data.indexes[0].aqi) {
-        const aqi = data.indexes[0].aqi || "Dados indisponíveis";
+      if (aqi !== null) {
         resultados[bairro] = {
           qualidadeAr: aqi,
         };
       } else {
         resultados[bairro] = {
-          error: "Dados de qualidade do ar não encontrados",
+          error: "Dados de qualidade do ar não encontrados.",
         };
       }
     } catch (error) {
@@ -54,4 +46,5 @@ const getAllAirQualityData = async (bairrosManaus) => {
 
 module.exports = {
   getAllAirQualityData,
+  getAirQualityByCoordinates
 };
